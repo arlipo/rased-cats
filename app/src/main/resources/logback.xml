@@ -1,0 +1,56 @@
+<configuration>
+    <variable name="environment" value="${ENVIRONMENT:-local}"/>
+    <variable name="log_level" value="${LOG_LEVEL:-INFO}" />
+
+    <appender name="STDOUT-LOCAL" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>
+                %highlight(%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level) %cyan(%logger{36}) - %highlight(%msg%n)
+            </pattern>
+        </encoder>
+    </appender>
+
+<!--    <appender name="STDOUT-JSON" class="ch.qos.logback.core.ConsoleAppender">-->
+<!--        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">-->
+<!--            <providers>-->
+<!--                <timestamp>-->
+<!--                    <pattern>-->
+<!--                        yyyy-MM-dd'T'HH:mm:ss.SSS'Z'-->
+<!--                    </pattern>-->
+<!--                </timestamp>-->
+<!--                <message/>-->
+<!--                <loggerName/>-->
+<!--                <threadName/>-->
+<!--                <logLevel/>-->
+<!--                <callerData/>-->
+<!--                <stackTrace/>-->
+<!--                <stackHash/>-->
+<!--                <throwableClassName/>-->
+<!--                <throwableRootCauseClassName/>-->
+<!--                <mdc/>-->
+<!--                <tags/>-->
+<!--            </providers>-->
+<!--        </encoder>-->
+<!--    </appender>-->
+
+<!--    <appender name="FILE" class="ch.qos.logback.core.FileAppender">-->
+<!--        <file>./authentication.log</file>-->
+<!--        <append>true</append>-->
+<!--        <encoder>-->
+<!--            <pattern>%d{HH:mm:ss.SSS} [%-5level] %logger{15} - %msg%n%rEx</pattern>-->
+<!--        </encoder>-->
+<!--    </appender>-->
+
+    <root level="${log_level}">
+        <appender-ref ref="STDOUT-LOCAL"/>
+<!--        <if condition='property("environment").toLowerCase().startsWith("local")'>-->
+<!--            <then>-->
+<!--                <appender-ref ref="STDOUT-LOCAL"/>-->
+<!--                <appender-ref ref="FILE"/>-->
+<!--            </then>-->
+<!--            <else>-->
+<!--                <appender-ref ref="STDOUT-JSON"/>-->
+<!--            </else>-->
+<!--        </if>-->
+    </root>
+</configuration>
