@@ -102,4 +102,10 @@ object Dependencies {
     val jacksonDatabind = "com.fasterxml.jackson.core" % "jackson-databind" % jacksonVersion
     val all = Seq(core, client, jacksonModule, jacksonDatabind)
   }
+
+  object Mongo4cats {
+    val core = "io.github.kirill5k" %% "mongo4cats-core" % "0.7.4"
+
+    val all = Seq(core)
+  }
 }

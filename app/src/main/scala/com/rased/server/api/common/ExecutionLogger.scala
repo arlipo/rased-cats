@@ -22,6 +22,7 @@ private[api] object ExecutionLogger {
   def withLogging[F[_]: MonadThrow: Logger: Random, A](logger: ExecutionLogger)(fa: F[A]): F[A] =
     withUID { uid =>
       val prefix = s"$uid - "
+
       Logger[F].info(prefix + logger.logStart) >> fa.attempt.flatTap {
         case Right(_)                          =>
           Logger[F].info(prefix + logger.log2xx)

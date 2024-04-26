@@ -1,6 +1,6 @@
 <configuration>
     <variable name="environment" value="${ENVIRONMENT:-local}"/>
-    <variable name="log_level" value="${LOG_LEVEL:-INFO}" />
+    <variable name="log_level" value="${LOG_LEVEL:-DEBUG}" />
 
     <appender name="STDOUT-LOCAL" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>

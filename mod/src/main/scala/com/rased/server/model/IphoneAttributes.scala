@@ -1,5 +1,8 @@
 package com.rased.server.model
 
+import io.circe.Codec
+import io.circe.generic.semiauto.deriveCodec
+
 object IphoneAttributes {
   case class Hardware(
     cpu_count:          String,
@@ -33,4 +36,10 @@ object IphoneAttributes {
     os_timeZone_identifier: String, // exclude
     os_type:                String
   )
+
+  implicit
+  val HardwareCodec: Codec[Hardware]                                = deriveCodec
+  implicit val CellularInfoCodec: Codec[CellularInfo]               = deriveCodec
+  implicit val LocalAuthenticationCodec: Codec[LocalAuthentication] = deriveCodec
+  implicit val OperatingSystemInfoCodec: Codec[OperatingSystemInfo] = deriveCodec
 }

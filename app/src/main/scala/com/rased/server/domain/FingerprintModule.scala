@@ -1,18 +1,26 @@
 package com.rased.server.domain
 
 import cats.effect.Sync
-import com.rased.server.model.Attributes.Fingerprint
-import com.rased.server.model.ClientDataDto
+import com.rased.server.database.ServerRepository
+import com.rased.server.model.Attributes.{Fingerprint, FingerprintString, LastSeen}
+import com.rased.server.model.UserDataDto
 
 import scala.util.hashing.MurmurHash3
 
 trait FingerprintModule[F[_]] {
-  def calculateFingerprint(data: ClientDataDto): F[Fingerprint]
+  def calculateFingerprint(data: UserDataDto): F[Fingerprint]
+
+  def updateAndCheckLastSeen(fingerprint: Fingerprint): F[Option[LastSeen]]
 }
 
 object FingerprintModule {
-  def create[F[_]: Sync](): FingerprintModule[F] = new FingerprintModule[F] {
-    def calculateFingerprint(data: ClientDataDto): F[Fingerprint] = Sync[F].delay {
+  def create[F[_]: Sync](serverRepository: ServerRepository[F]): FingerprintModule[F] = new FingerprintModule[F] {
+
+
+    def updateAndCheckLastSeen(fingerprint: Fingerprint): F[Option[LastSeen]] =
+      serverRepository.upsertFingerprint(fingerprint)
+
+    def calculateFingerprint(data: UserDataDto): F[Fingerprint] = Sync[F].delay {
       val dataList       = getDataList(data)
       val normalisedData = dataList
         .map(_
@@ -25,16 +33,16 @@ object FingerprintModule {
       val secondHalf     = MurmurHash3.stringHash(dataStr.reverse)
       val result         = firstHalf.toLong << 32 | (secondHalf & 0xffffffffL)
 
-      Fingerprint(result.toHexString)
+      Fingerprint(result)
     }
 
-    def getDataList(data: ClientDataDto): List[String] = data match {
-      case android: ClientDataDto.Android =>
+    def getDataList(data: UserDataDto): List[String] = data match {
+      case android: UserDataDto.Android =>
         List(
           "android",
           android.osData.gsfId
         )
-      case iphone: ClientDataDto.Iphone   =>
+      case iphone: UserDataDto.Iphone   =>
         List(
           "iphone",
           iphone.hardware.cpu_count,

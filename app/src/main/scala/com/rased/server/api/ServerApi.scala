@@ -9,20 +9,20 @@ trait ServerApi extends algebra.Endpoints with ServerRecords {
     if (input == "" || input == "/") path
     else input.dropWhile(_ == '/').split("/").foldLeft(path)(_ / _)
 
-  def executeFingerprint(prefix: String): Endpoint[ClientDataDto, FingerprintResponse] = endpoint(
-    request  = request(Post, root(prefix) / "fingerprint", jsonRequest[ClientDataDto]),
+  def executeFingerprint(prefix: String): Endpoint[UserDataDto, FingerprintResponse] = endpoint(
+    request  = request(Post, root(prefix) / "fingerprint", jsonRequest[UserDataDto]),
     response = ok(jsonResponse[FingerprintResponse]),
     docs     = EndpointDocs().withDescription("Endpoint for saving and checking fingerprint.".some)
   )
 
-  def executeFingerprintForAndroid(prefix: String): Endpoint[ClientDataDto.Android, FingerprintResponse] = endpoint(
-    request  = request(Post, root(prefix) / "fingerprint" / "android", jsonRequest[ClientDataDto.Android]),
+  def executeFingerprintForAndroid(prefix: String): Endpoint[UserDataDto.Android, FingerprintResponse] = endpoint(
+    request  = request(Post, root(prefix) / "fingerprint" / "android", jsonRequest[UserDataDto.Android]),
     response = ok(jsonResponse[FingerprintResponse]),
     docs     = EndpointDocs().withDescription("Endpoint for saving and checking fingerprint for Android.".some)
   )
 
-  def executeFingerprintForIphone(prefix: String): Endpoint[ClientDataDto.Iphone, FingerprintResponse] = endpoint(
-    request  = request(Post, root(prefix) / "fingerprint" / "iphone", jsonRequest[ClientDataDto.Iphone]),
+  def executeFingerprintForIphone(prefix: String): Endpoint[UserDataDto.Iphone, FingerprintResponse] = endpoint(
+    request  = request(Post, root(prefix) / "fingerprint" / "iphone", jsonRequest[UserDataDto.Iphone]),
     response = ok(jsonResponse[FingerprintResponse]),
     docs     = EndpointDocs().withDescription("Endpoint for saving and checking fingerprint for iPhone.".some)
   )

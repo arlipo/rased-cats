@@ -1,5 +1,8 @@
 package com.rased.server.model
 
+import io.circe.Codec
+import io.circe.generic.semiauto.deriveCodec
+
 object AndroidAttributes {
   case class OsData(
     gsfId:      String,
@@ -40,4 +43,11 @@ object AndroidAttributes {
     abiType:                   String,
     coresCount:                String
   )
+
+  implicit
+  val OsDataCodec: Codec[OsData]                      = deriveCodec
+  implicit val DisplayInfoCodec: Codec[DisplayInfo]   = deriveCodec
+  implicit val LocaleInfoCodec: Codec[LocaleInfo]     = deriveCodec
+  implicit val SoftwareInfoCodec: Codec[SoftwareInfo] = deriveCodec
+  implicit val HardwareInfoCodec: Codec[HardwareInfo] = deriveCodec
 }

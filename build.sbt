@@ -56,7 +56,7 @@ lazy val dao =
     .in(file("dao"))
     .settings(commonSettings)
     .settings(
-      libraryDependencies ++= Flyway.all ++ Cats.all ++ Ciris.all ++ Doobie.all ++ Log4cats.all,
+      libraryDependencies ++= Flyway.all ++ Cats.all ++ Ciris.all ++ Doobie.all ++ Log4cats.all ++ Mongo4cats.all,
       libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.5.6"
     )
     .settings(

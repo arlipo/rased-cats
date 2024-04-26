@@ -1,10 +1,12 @@
 package com.rased.server.model
 
-import com.rased.server.model.Attributes.Fingerprint
-
-import java.time.Instant
+import com.rased.server.model.Attributes.{FingerprintString, LastSeen}
 
 case class FingerprintResponse(
-  fingerprint: Fingerprint,
-  prevLogin:   Option[Instant]
+  fingerprint: FingerprintString,
+  prevLogin:   Option[LastSeen]
 )
+
+object FingerprintResponse {
+
+}

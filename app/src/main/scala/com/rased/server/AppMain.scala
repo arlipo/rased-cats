@@ -4,24 +4,21 @@ import cats.Parallel
 import cats.effect.implicits.effectResourceOps
 import cats.effect.kernel.{Async, Resource}
 import cats.effect.std.Random
-import cats.effect.unsafe.implicits.global
 import cats.effect.{ExitCode, IO, IOApp}
 import cats.syntax.flatMap._
 import cats.syntax.functor._
 import cats.syntax.traverse._
 import com.rased.server.api.ServerEndpoint
 import com.rased.server.api.docs.AppDocsEndpoint
-import com.rased.server.dao.postgres.ServerPostgresDao
-import com.rased.server.database.{PostgresRunner, PostgresTransactor, ServerRepository}
-import com.rased.server.domain.FingerprintModule
+import com.rased.server.dao.ServerDao
+import com.rased.server.database.{PostgresRunner, PostgresTransactor, ServerMongoClient, ServerRepository}
+import com.rased.server.domain.{FingerprintModule, UserDataModule}
 import com.rased.server.infra.AppRoutes
 import com.rased.server.infra.config.AppConfig
 import org.http4s.HttpApp
 import org.http4s.blaze.server.BlazeServerBuilder
 import org.typelevel.log4cats.slf4j.Slf4jLogger
 import org.typelevel.log4cats.{Logger, SelfAwareStructuredLogger}
-
-import scala.util.chaining.scalaUtilChainingOps
 
 object AppMain extends IOApp {
 
@@ -62,12 +59,14 @@ object AppMain extends IOApp {
   private def getRoutes[F[_]: Async: Logger: Parallel](config: AppConfig): Resource[F, HttpApp[F]] = for {
     postgresTransactor <- PostgresTransactor.create[F](config.postgresConfig)
     random             <- Random.scalaUtilRandom[F].toResource
+    mongoClient        <- ServerMongoClient.resource(config.mongoConfig)
+    userDataModule     <- UserDataModule.create(mongoClient).toResource
     postgresRunner      = PostgresRunner.create[F](postgresTransactor)
-    serverRepository    = ServerRepository.create[F](postgresRunner, ServerPostgresDao)
-    fingerprintModule   = FingerprintModule.create[F]()
+    serverRepository    = ServerRepository.create[F](postgresRunner, ServerDao)
+    fingerprintModule   = FingerprintModule.create[F](serverRepository)
     serverEndpoint      = {
       implicit val rand: Random[F] = random
-      ServerEndpoint.create[F](fingerprintModule)
+      ServerEndpoint.create[F](fingerprintModule, userDataModule)
     }
     docsEndpoint        = new AppDocsEndpoint[F]
   } yield AppRoutes.create(serverEndpoint, docsEndpoint)
